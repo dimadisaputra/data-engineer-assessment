@@ -1,0 +1,14 @@
+dimadisaputra@Dimass-MacBook-Air queries % docker exec -i postgres psql -U postgres < /Users/dimadisaputra/Dev/data-engineer-assessment/1-sql-assessment/queries/QUERY_INVENTORY_TURNOVER.sql
+   branch_name   | total_incoming_stock | total_outgoing_stock | current_stock_level | number_of_expired_items | stock_turnover_rate 
+-----------------+----------------------+----------------------+---------------------+-------------------------+---------------------
+ West Jakarta    |                  700 |                  450 |                 250 |                       0 |  3.6000000000000000
+ South Jakarta   |                   50 |                   30 |                  20 |                       0 |  3.0000000000000000
+ Central Jakarta |                  100 |                 2300 |                 790 |                      10 |  1.2137203166226913
+ Surabaya East   |                    0 |                    0 |                   0 |                       0 |                   0
+ Makassar South  |                    0 |                    0 |                   0 |                       0 |                   0
+ Denpasar Main   |                    0 |                    0 |                   0 |                       0 |                   0
+ East Jakarta    |                    0 |                    0 |                   0 |                       0 |                   0
+ Bandung Central |                    0 |                    0 |                   0 |                       0 |                   0
+ North Jakarta   |                    0 |                    0 |                   0 |                       0 |                   0
+ Medan North     |                    0 |                    0 |                   0 |                       0 |                   0
+(10 rows)

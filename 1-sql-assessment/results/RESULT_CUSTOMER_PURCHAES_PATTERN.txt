@@ -1,0 +1,5 @@
+dimadisaputra@Dimass-MacBook-Air queries % docker exec -i postgres psql -U postgres < /Users/dimadisaputra/Dev/data-engineer-assessment/1-sql-assessment/queries/QUERY_CUSTOMER_PURCHAES_PATTERN.sql 
+ product_a_name | product_b_name | product_a_category | product_b_category | co_occurrence_frequency 
+----------------+----------------+--------------------+--------------------+-------------------------
+ Indomie Goreng | Aqua 600ml     | Food               | Beverage           |                      10
+(1 row)

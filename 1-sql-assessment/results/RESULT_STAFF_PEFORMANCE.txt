@@ -1,0 +1,11 @@
+dimadisaputra@Dimass-MacBook-Air queries % docker exec -i postgres psql -U postgres < /Users/dimadisaputra/Dev/data-engineer-assessment/1-sql-assessment/queries/QUERY_STAFF_PEFORMANCE.sql
+ staff_id |   branch_name   | number_of_transactions | total_sales_amount | average_transaction_value | performance_score 
+----------+-----------------+------------------------+--------------------+---------------------------+-------------------
+ STF002   | Central Jakarta |                     10 |           76000.00 |     7600.0000000000000000 |              4.20
+ STF004   | West Jakarta    |                      1 |           50000.00 |        50000.000000000000 |              4.60
+ STF006   | North Jakarta   |                      0 |                  0 |                         0 |              4.80
+ STF008   | East Jakarta    |                      0 |                  0 |                         0 |              4.10
+ STF009   | Bandung Central |                      0 |                  0 |                         0 |              4.90
+ STF001   | Central Jakarta |                      0 |                  0 |                         0 |              4.50
+ STF010   | Bandung Central |                      0 |                  0 |                         0 |              4.30
+ STF003   | West Jakarta    |                      0 |                  0 |                         0 |              3.80
