@@ -20,7 +20,8 @@ JOIN branch_details bd
     ON sr.branch_code = bd.branch_code
 LEFT JOIN sales_transactions st 
     ON sr.staff_id = st.staff_id
-    AND EXTRACT(YEAR FROM st.transaction_date) = 2023
+    AND st.transaction_date >= '2023-01-01' 
+    AND st.transaction_date < '2024-01-01'
 WHERE sr.resignation_date IS NULL 
 GROUP BY sr.staff_id, bd.branch_name, sr.performance_score
 ORDER BY number_of_transactions DESC;
