@@ -15,11 +15,13 @@ WITH inventory_calc AS (
         bd.branch_code,
         bd.branch_name,
 
+        -- QUANTITY METRICS
+
         -- Beginning Stock
         SUM(CASE 
             WHEN im.transaction_date < CURRENT_DATE - INTERVAL '3 month' THEN
                 CASE 
-                    WHEN im.transaction_type = 'IN' THEN im.quantity
+                    WHEN im.transaction_type IN ('IN', 'ADJ', 'RTN') THEN im.quantity
                     WHEN im.transaction_type IN ('OUT', 'EXP') THEN -im.quantity
                     ELSE 0
                 END
@@ -55,7 +57,58 @@ WITH inventory_calc AS (
                     ELSE 0
                 END
             ELSE 0
-        END) AS stock_exp_period
+        END) AS stock_exp_period,
+
+        SUM(CASE
+            WHEN im.transaction_date >= CURRENT_DATE - INTERVAL '3 month'
+            THEN 
+                CASE
+                    WHEN im.transaction_type = 'ADJ' THEN im.quantity
+                    ELSE 0
+                END
+            ELSE 0
+        END) AS stock_adj_period,
+
+        SUM(CASE
+            WHEN im.transaction_date >= CURRENT_DATE - INTERVAL '3 month'
+            THEN 
+                CASE
+                    WHEN im.transaction_type = 'RTN' THEN im.quantity
+                    ELSE 0
+                END
+            ELSE 0
+        END) AS stock_rtn_period,
+
+        -- VALUE METRICS
+
+        SUM(CASE 
+            WHEN im.transaction_date < CURRENT_DATE - INTERVAL '3 month'
+            THEN
+                CASE
+                    WHEN im.transaction_type IN ('IN', 'ADJ', 'RTN') THEN im.quantity * im.unit_cost_at_time
+                    WHEN im.transaction_type IN ('OUT', 'EXP') THEN -im.quantity * im.unit_cost_at_time
+                    ELSE 0
+                END
+            ELSE 0
+        END) AS beginning_stock_value,
+
+        SUM(CASE
+            WHEN im.transaction_type IN ('IN', 'ADJ', 'RTN') THEN im.quantity * im.unit_cost_at_time
+            WHEN im.transaction_type IN ('OUT', 'EXP') THEN -im.quantity * im.unit_cost_at_time
+            ELSE 0
+        END) AS ending_stock_value,
+
+        SUM(CASE 
+            WHEN im.transaction_date >= CURRENT_DATE - INTERVAL '3 month'
+            THEN 
+                CASE
+                    WHEN im.transaction_type = 'OUT' THEN im.quantity * im.unit_cost_at_time
+                    ELSE 0
+                END
+            ELSE 0
+        END) AS cogs
+
+
     FROM branch_details bd
     LEFT JOIN inventory_movements im 
         ON bd.branch_code = im.branch_code
@@ -65,7 +118,7 @@ final_metrics AS (
     SELECT
         *,
         -- ending inventory
-        (beginning_stock + stock_in_period - stock_out_period - stock_exp_period) AS ending_stock
+        (beginning_stock + stock_in_period - stock_out_period - stock_exp_period + stock_adj_period + stock_rtn_period) AS ending_stock
     FROM inventory_calc
 )
 SELECT 
@@ -77,6 +130,10 @@ SELECT
     CASE 
         WHEN (beginning_stock + ending_stock) / 2.0 = 0 THEN 0
         ELSE stock_out_period / ((beginning_stock + ending_stock) / 2.0)
-    END AS stock_turnover_rate
+    END AS stock_turnover_rate,
+    CASE 
+        WHEN (beginning_stock_value + ending_stock_value) / 2.0 = 0 THEN 0
+        ELSE cogs / ((beginning_stock_value + ending_stock_value) / 2.0)
+    END AS stock_turnover_rate_value
 FROM final_metrics
 ORDER BY stock_turnover_rate DESC;
